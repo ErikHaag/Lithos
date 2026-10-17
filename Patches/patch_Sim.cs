@@ -26,6 +26,11 @@ class patch_Sim
         return molA;
     }
 
+    /// <summary>
+    /// Spawns a small collider at the specified hex.<br/>
+    /// From Lithos.
+    /// </summary>
+    /// <param name="hex">The hex to spawn.</param>
     public void SpawnCollider(HexIndex hex)
     {
         ((Sim)(object)this).additionalCollisions.Add(new Sim.Collider()
@@ -36,8 +41,21 @@ class patch_Sim
         });
     }
 
+    /// <summary>
+    /// Spawns a small collider relative to a part.<br/>
+    /// From Lithos.
+    /// </summary>
+    /// <param name="part">The part <paramref name="offset"/> is relative to.</param>
+    /// <param name="offset">The hex to spawn.</param>
     public void SpawnColliderRelative(Part part, HexIndex offset) => SpawnCollider(part.InFrontBy(offset));
 
+    /// <summary>
+    /// Spawns a new molecule on the board with a single atom.<br/>
+    /// From Lithos.
+    /// </summary>
+    /// <param name="atomType">The atomtype to spawn</param>
+    /// <param name="hex">The hex to spawn.</param>
+    /// <returns>The atom object being spawned.</returns>
     public Atom SpawnAtom(AtomType atomType, HexIndex hex)
     {
         Molecule molecule = new();
@@ -47,5 +65,13 @@ class patch_Sim
         return atom;
     }
 
+    /// <summary>
+    /// Spawns an atom relative to a part.<br/>
+    /// From Lithos.
+    /// </summary>
+    /// <param name="atomType">The atomtype to spawn</param>
+    /// <param name="part">The part <paramref name="offset"/> is relative to.</param>
+    /// <param name="offset">The hex to spawn.</param>
+    /// <returns>The atom object being spawned.</returns>
     public Atom SpawnAtomRelative(AtomType atomType, Part part, HexIndex offset) => SpawnAtom(atomType, part.InFrontBy(offset));
 }

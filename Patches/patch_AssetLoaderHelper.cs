@@ -18,7 +18,7 @@ class patch_AssetLoaderHelper
         Texture[] animation = new Texture[count];
         for (int i = 0; i < count; i++)
         {
-            animation[i] = AssetLoaderHelper.LoadTexture(Path.Combine(frameFolder, frameName + "_" + (i + 1).ToString().PadLeft(padding)));
+            animation[i] = AssetLoaderHelper.LoadTexture(Path.Combine(frameFolder, frameName + "_" + (i + 1).ToString().PadLeft(padding, '0')));
         }
         return animation;
     }

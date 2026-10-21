@@ -7,6 +7,7 @@ using MonoMod;
 class patch_SolutionEditorBase
 {
     [MonoModIgnore]
+    [MonoModPublic]
     extern public static void method_2450(PartRenderer param_8686, Texture param_8687, Texture param_8688, Vector2 param_8689);
     
     /// <summary>

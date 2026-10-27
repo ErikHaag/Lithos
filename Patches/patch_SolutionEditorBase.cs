@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MonoMod;
+﻿using MonoMod;
 
 [MonoModPatch("SolutionEditorBase")]
 class patch_SolutionEditorBase
 {
     [MonoModIgnore]
     [MonoModPublic]
-    extern public static void method_2450(PartRenderer param_8686, Texture param_8687, Texture param_8688, Vector2 param_8689);
+    public static extern void method_2450(PartRenderer param_8686, Texture param_8687, Texture param_8688, Vector2 param_8689);
     
     /// <summary>
     /// Draws an atom falling into a hole.<br/>

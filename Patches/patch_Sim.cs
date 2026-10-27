@@ -1,11 +1,14 @@
 ﻿using MonoMod;
-using System.Collections.Generic;
 
 [MonoModPatch("Sim")]
 class patch_Sim
 {
     [MonoModIgnore]
-    private static readonly float collSizeEmergingAtom;
+    public static readonly float collSizeEmergingAtom;
+    
+    [MonoModIgnore]
+    [MonoModPublic]
+    public extern void PlaySound(Sound sound);
 
     /// <summary>
     /// Turns two molecules into a single molecule.<br/>

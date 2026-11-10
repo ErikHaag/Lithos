@@ -50,7 +50,7 @@ class patch_Sim
     /// </summary>
     /// <param name="part">The part <paramref name="offset"/> is relative to.</param>
     /// <param name="offset">The hex to spawn.</param>
-    public void SpawnColliderRelative(Part part, HexIndex offset) => SpawnCollider(part.InFrontBy(offset));
+    public void SpawnColliderRelative(Part part, HexIndex offset) => SpawnCollider(part.GlobalPosFromLocal(offset));
 
     /// <summary>
     /// Spawns a new molecule on the board with a single atom.<br/>
@@ -76,5 +76,5 @@ class patch_Sim
     /// <param name="part">The part <paramref name="offset"/> is relative to.</param>
     /// <param name="offset">The hex to spawn.</param>
     /// <returns>The atom object being spawned.</returns>
-    public Atom SpawnAtomRelative(AtomType atomType, Part part, HexIndex offset) => SpawnAtom(atomType, part.InFrontBy(offset));
+    public Atom SpawnAtomRelative(AtomType atomType, Part part, HexIndex offset) => SpawnAtom(atomType, part.GlobalPosFromLocal(offset));
 }

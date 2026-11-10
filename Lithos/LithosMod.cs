@@ -7,7 +7,7 @@ internal class LithosMod : QuintessentialMod, IDataMod {
     public override string ModId => "lithos";
 
     public override void Load() {
-        Logger.Log("Lithos: The world is shaped to your will, make it comfortable.");
+        Instance.Log.Info("Lithos: The world is shaped to your will, make it comfortable.");
     }
 
     public override void LoadContent() {}

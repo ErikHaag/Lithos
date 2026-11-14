@@ -1,4 +1,10 @@
-﻿using MonoMod;
+﻿using Lithos;
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+using MonoMod;
+using MonoMod.Cil;
+using System;
+using System.Linq;
 
 [MonoModPatch("Sim")]
 class patch_Sim
@@ -77,4 +83,78 @@ class patch_Sim
     /// <param name="offset">The hex to spawn.</param>
     /// <returns>The atom object being spawned.</returns>
     public Atom SpawnAtomRelative(AtomType atomType, Part part, HexIndex offset) => SpawnAtom(atomType, part.GlobalPosFromLocal(offset));
+
+    [MonoModILInject("layer_0_RunCycleGlyphs")]
+    public static void PatchLayer0RunCycleGlyphs(MethodDefinition method, CustomAttribute attr)
+    {
+        Console.WriteLine("[Lithos] Patching RunCycleGlyphs.");
+        ILCursor gremlin = new(new ILContext(method));
+        if (!gremlin.TryGotoNext(MoveType.After,
+            instr => instr.OpCode == OpCodes.Br,
+            instr => instr.OpCode == OpCodes.Newobj && ((MethodReference)instr.Operand).DeclaringType.FullName == "Sim/ReferredPart",
+            instr => instr.OpCode == OpCodes.Stloc_S
+        )) {
+            Console.WriteLine("[Lithos] Could not find ReferredPart creation.");
+            throw new Exception();
+        }
+        Instruction partLoopEnd = (Instruction)gremlin.Prev.Previous.Previous.Operand;
+        VariableDefinition refPartVar = (VariableDefinition)gremlin.Prev.Operand;
+        if (!gremlin.TryGotoNext(MoveType.After,
+            instr => instr.OpCode == OpCodes.Callvirt && ((MethodReference)instr.Operand).Name == "get_Item",
+            instr => instr.OpCode == OpCodes.Stloc_S && ((VariableDefinition)instr.Operand).VariableType.Name == "PartSimState"
+        ))
+        {
+            Console.WriteLine("[Lithos] Could not find Part sim state.");
+            throw new Exception();
+        }
+        VariableDefinition pssVar = (VariableDefinition)gremlin.Prev.Operand;
+        Instruction temp = gremlin.Next; // return here later
+        gremlin.Goto(partLoopEnd);
+
+        TypeDefinition simDef = method.DeclaringType.Resolve();
+        MethodDefinition AfterRecipesEventDef = simDef.Methods.First(m => m.Name == nameof(AfterRecipesEvent) && m.IsPrivate && !m.IsStatic);
+        
+        // Detour to new code.
+        gremlin.Emit(OpCodes.Ldarg_0);
+        Instruction newTarget = gremlin.Prev;
+        gremlin.Emit(OpCodes.Ldloc, refPartVar);
+        gremlin.Emit(OpCodes.Ldloc, pssVar);
+        gremlin.Emit(OpCodes.Ldarg_1);
+        gremlin.Emit(OpCodes.Callvirt, AfterRecipesEventDef);
+        
+        gremlin.Goto(temp); // woah, deja vu.
+        if (!gremlin.TryGotoNext(MoveType.After,
+            instr => instr.OpCode == OpCodes.Callvirt && ((MethodReference)instr.Operand).Name == "TryGetValue",
+            instr => instr.OpCode == OpCodes.Brfalse && ((Instruction)instr.Operand) == partLoopEnd
+        ))
+        {
+            Console.WriteLine("[Lithos] Couldn't find recipeless branch.");
+            throw new Exception();
+        }
+        gremlin.Prev.Operand = newTarget;
+
+        if (!gremlin.TryGotoNext(MoveType.After,
+            instr => instr.OpCode == OpCodes.Ldfld && ((FieldReference)instr.Operand).Name == "wasActivated",
+            instr => instr.OpCode == OpCodes.Brtrue && ((Instruction)instr.Operand) == partLoopEnd
+        ))
+        {
+            Console.WriteLine("[Lithos] Couldn't find wasActivated break.");
+            throw new Exception();
+        }
+        gremlin.Prev.Operand = newTarget;
+
+        Console.WriteLine("[Lithos] Ok.");
+    }
+
+    private void AfterRecipesEvent(Sim.ReferredPart referred, PartSimState simState, bool isCycleStart)
+    {
+        Part part = referred.part;
+        if (LApi.AfterNativeRecipesHandlers.TryGetValue(part.GetType().Id, out var handlers))
+        {
+            foreach (var handler in handlers.Values)
+            {
+                handler((Sim)(object)this, part, simState, isCycleStart);
+            }
+        }
+    }
 }

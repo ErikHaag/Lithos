@@ -23,7 +23,7 @@ class patch_SolutionEditorBase
     [MonoModILInject("layer_0_RenderPartBase")]
     public static void PatchRenderPartBase(MethodDefinition method, CustomAttribute attr)
     {
-        Console.WriteLine("[Lithos] Patching RenderPartBase");
+        Console.WriteLine("[Lithos] Patching RenderPartBase.");
 
         ILCursor gremlin = new(new ILContext(method));
         if (!gremlin.TryGotoNext(MoveType.After,
@@ -40,7 +40,7 @@ class patch_SolutionEditorBase
             instr => instr.OpCode == OpCodes.Call && ((MethodReference)instr.Operand).Name == "RenderArmLights"
         ))
         {
-            Console.WriteLine("[Lithos] Could not find RAL call");
+            Console.WriteLine("[Lithos] Could not find RAL call.");
             throw new Exception();
         }
         Instruction insertionInstruction = gremlin.Prev;
@@ -55,7 +55,7 @@ class patch_SolutionEditorBase
         gremlin.Goto((Instruction)gremlin.Prev.Operand);
         if (!gremlin.TryGotoNext(MoveType.After, instr => instr.OpCode == OpCodes.Endfinally))
         {
-            Console.WriteLine("[Lithos] Could not find loop exit");
+            Console.WriteLine("[Lithos] Could not find loop exit.");
             throw new Exception();
         }
         Instruction ifEnd = gremlin.Next;

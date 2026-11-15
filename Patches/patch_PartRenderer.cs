@@ -12,7 +12,7 @@ class patch_PartRenderer
     /// <param name="pivot">The point where this texture rotates.</param>
     public void RenderGloss(Texture gloss, Texture mask, Vector2 pivot)
     {
-        patch_SolutionEditorBase.method_2450((PartRenderer)(object)this, gloss, mask, pivot);
+        patch_SolutionEditorBase.RenderMaskedGloss((PartRenderer)(object)this, gloss, mask, pivot);
     }
     /// <summary>
     /// Draws an functional iris.<br/>

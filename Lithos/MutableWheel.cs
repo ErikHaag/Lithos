@@ -131,11 +131,11 @@ public class MutableWheel
 
     public bool TryFindWheelAtomAt(SolutionEditorBase seb, HexIndex hex, out AtomReference reference) => TryFindWheelAtomAt(seb.GetSimulation(), seb.GetSolution().parts, hex, out reference);
 
-    public bool TryFindWheelAtRelative(ISim sim, List<Part> parts, Part originPart, HexIndex offset, out AtomReference reference) => TryFindWheelAtomAt(sim, parts, originPart.GlobalPosFromLocal(offset), out reference);
+    public bool TryFindWheelAtomRelative(ISim sim, List<Part> parts, Part originPart, HexIndex offset, out AtomReference reference) => TryFindWheelAtomAt(sim, parts, originPart.GlobalPosFromLocal(offset), out reference);
 
-    public bool TryFindWheelAtRelative(Sim sim, Part originPart, HexIndex offset, out AtomReference reference) => TryFindWheelAtomAt(sim, originPart.GlobalPosFromLocal(offset), out reference);
+    public bool TryFindWheelAtomRelative(Sim sim, Part originPart, HexIndex offset, out AtomReference reference) => TryFindWheelAtomAt(sim, originPart.GlobalPosFromLocal(offset), out reference);
 
-    public bool TryFindWheelAtRelative(SolutionEditorBase seb, Part originPart, HexIndex offset, out AtomReference reference) => TryFindWheelAtomAt(seb, originPart.GlobalPosFromLocal(offset), out reference);
+    public bool TryFindWheelAtomRelative(SolutionEditorBase seb, Part originPart, HexIndex offset, out AtomReference reference) => TryFindWheelAtomAt(seb, originPart.GlobalPosFromLocal(offset), out reference);
 
     
 }

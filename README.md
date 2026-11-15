@@ -1,4 +1,2 @@
-﻿# Template mod
-The template mod for CE Opus Magnum modding.
-
-Still work in progress.
+﻿# Lithos
+Lithos is a small library mod for common procedures or constructions that would be outside the scope for Quintessential.
